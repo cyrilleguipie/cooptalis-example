@@ -1,0 +1,13 @@
+sudo: required
+services:
+- docker
+language: go
+deploy:
+  provider: gae
+  project: cooptalis-216012
+  keyfile: gce.json
+  verbosity: debug
+  on: master
+before_install:
+- openssl aes-256-cbc -K $encrypted_17aba5a4fdd9_key -iv $encrypted_17aba5a4fdd9_iv
+  -in gce.json.enc -out gce.json -d

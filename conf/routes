@@ -8,6 +8,8 @@ module:testrunner
 
 
 GET     /                                       App.Index
+
+### API Routes
 GET     /menu                                   Menus.List
 GET     /clients                                Clients.List
 GET     /collaborateurs                         Collaboraters.List

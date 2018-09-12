@@ -24,7 +24,7 @@ func InitUser() {
 		fmt.Println("InitUser : Initialization ...")
 		createUser("admin@cooptalis.com", "admin", string(utils.ADMIN), "ADMIN123")
 		createUser("member@cooptalis.com", "member", string(utils.MEMBER), "MEMBER123")
-		createUser("anonymous@cooptalis.com", "anonymous", string(utils.ANONYMOUS), "AMONYMOUS123")
+		createUser("anonymous@cooptalis.com", "anonymous", string(utils.ANONYMOUS), "ANONYMOUS123")
 
 	}
 

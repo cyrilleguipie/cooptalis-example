@@ -1,0 +1,7 @@
+# docker-compose.yml
+
+web:
+  build: .
+  restart: always
+  ports:
+  - '9000:9000'

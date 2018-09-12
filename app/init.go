@@ -4,7 +4,6 @@ import (
 	"cooptalis-example/app/controllers"
 	"cooptalis-example/app/models"
 	"cooptalis-example/app/utils"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/revel/revel"
 	"log"
 	"net/http"

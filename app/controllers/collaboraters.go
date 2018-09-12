@@ -48,7 +48,7 @@ func (c Collaboraters) Update(id uint) revel.Result {
 			fmt.Println("key state not found")
 		}
 		models.Gorm.Save(&data)
-		response.Success = false
+		response.Success = true
 		response.Data = data
 	}
 	return c.RenderJSON(response)
@@ -64,7 +64,7 @@ func (c Collaboraters) FindById(id uint) revel.Result {
 		response.Success = false
 		response.Message = "Database error"
 	} else {
-		response.Success = false
+		response.Success = true
 		response.Data = data
 	}
 	return c.RenderJSON(response)
