@@ -21,6 +21,7 @@ Le SGBD utilisé dans ce projet SQLite, le code source est formaté selon le sta
     go get github.com/jinzhu/gorm
    - Installer [Casbin](https://casbin.org/), 
 une bibliothèque d'autorisations qui prend en charge des modèles de contrôle d'accès tels que ACL, RBAC, ABAC pour Golang, Java, PHP et Node.js.
+la gestion des droits par role se fait dans le fichier <code>conf/authz_policy.csv</code>" 
 
     go get github.com/casbin/casbin
    - Installer BCrypt
@@ -257,8 +258,86 @@ Revel fournit un module de test. Dans ce projet, les tests sont dans le fichier 
       
      
 ##Integration Continue, Deploiement Continu 
-(***Encore en test***)
+(***Requiert un compte avec la facturation activée***)
 
 ####Architecture
 
-   AppEngine, Docker, Github, Travis CI
+   Google App Engine(GAE), Docker, Github, Travis CI
+   
+#####Docker
+
+- Créer un fichier <code>Dockerfile</code> et <code>docker-compose.yaml</code> a la racine du projet, en y specifiant l'image golang, les dependances, et le point d'entree  
+  Exemple:
+        
+        -------Dockerfile--------
+        FROM golang:1.11.0-stretch
+    
+        COPY . /go/src/cooptalis-example
+        WORKDIR /go/src/cooptalis-example
+    
+        # Install go libraries (Revel and Dependencies
+        RUN set go get github.com/revel/revel \
+        && go get github.com/revel/cmd/revel \
+        && go get github.com/jinzhu/gorm \
+        && go get github.com/casbin/casbin \
+        && go get golang.org/x/crypto/bcrypt
+    
+        EXPOSE 9000
+        ENTRYPOINT revel run cooptalis-example dev 9000
+        
+        --------docker-compose.yml--------
+        
+        # docker-compose.yml
+        
+        web:
+          build: .
+          restart: always
+          ports:
+          - '9000:9000'
+        
+        
+- Construire l'image et l'executer (en local) en faisant : <code>docker-compose up -d</code> puis <code>docker-compose run web</code>
+
+#####GCP
+
+- Creer un projet <code>my_project</code>
+- Installer [Google Cloud SDK](cloud.google.com/sdk), puis executer la commande <code>gcloud int</code>, authentifiez-vous et selectionnez votre projet <code>(my_project)</code>
+- Créer un fichier <app.yaml> afin de definir votre environement
+
+        runtime: custom
+        env: flex
+        api_version: 1 
+        
+- Déployer votre projet avec <code>gcloud app deploy</code>, l'application est a présent disponible sur <code>https://my_project-xxxxxx.appspot.com</code>
+
+#####GAE-Github-Travis-CI
+
+
+- Lier repository Github a Travis-CI [Tuto](https://docs.travis-ci.com/user/getting-started/)
+- Installer [Travis cli](https://github.com/travis-ci/travis.rb#installation) et connectez-vous avec vos credentials Github <code>travis login</code>
+- Autoriser l'acces a GAE par Travis en créeant un "compte de service" avec le role "editeur", puis télécharger la clé privée en format JSON
+- Renommer le fichier JSON en <code>gce.json</code>, en placer le a la racine du projet et ajouter a .gitignore <code>echo "gce.json" >> .gitignore</code>
+- Activer "App Engine Admin API"
+- Créer un fichier <code>.travis.yml</code>  
+ exemple : 
+ 
+        sudo: required
+        
+        services:
+          - docker
+        
+        language: go
+        
+        deploy:
+          provider: gae
+          project: my_projet-XXXXXX
+          keyfile: gce.json
+          verbosity: debug
+          on: master
+          
+          
+   
+ -Encrypter le fichier <code>gce.json</code> en executant <code>travis encrypt-file gce.json --add</code>
+ 
+ PS: La procédure de déploiement peut etre personnalisée en paramétrant le fichier <code>app.yaml</code> [Instructions](https://docs.travis-ci.com/user/customizing-the-build/) 
+         
