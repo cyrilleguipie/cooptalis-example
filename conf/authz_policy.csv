@@ -1,0 +1,3 @@
+p, admin, /*, (GET)|(POST)
+p, member, /menu, GET
+p, anonymous, /, GET
